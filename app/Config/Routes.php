@@ -5,7 +5,8 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Auth::loginView');
+$routes->get('/', 'PublicPage::index');
+$routes->get('widget', 'PublicPage::widget');
 
 // Auth Routes
 $routes->get('login', 'Auth::loginView');

@@ -50,20 +50,20 @@
     * Fungsi openModal(url): Fetch form, inject ke modal, tampilkan modal.  
     * Fungsi submitForm(e): Handle submit form via AJAX.
 
-## **Phase 5: Styling & UI Components**
+## Phase 5: Styling & UI Components
+ 
+ * [x] **Tailwind Input**: Buat public/css/input.css.  
+ * [x] **Styling Modal**:  
+   * Backdrop gelap (bg-slate-900/50 backdrop-blur-sm).  
+   * Box Putih (rounded-2xl shadow-xl animate-enter).  
+   * Transisi/Animasi sederhana.  
+ * [x] **Styling Sidebar**: Modern dark theme dengan gradient active state.
 
-* [ ] **Tailwind Input**: Buat public/css/input.css.  
-* [ ] **Styling Modal**:  
-  * Backdrop gelap (bg-black/50 fixed inset-0).  
-  * Box Putih (bg-white rounded-lg shadow-xl).  
-  * Transisi/Animasi sederhana.  
-* [ ] **Styling Sidebar**: Fixed width, full height, active state color.
+## Phase 6: Public Area
 
-## **Phase 6: Public Area**
-
-* [ ] **Public Controller**: Read data is_published = 1.  
-* [ ] **Landing Page**: Tampilkan data dalam tabel/grid card yang rapi.  
-* [ ] **Widget Page**: Halaman khusus iframe (tanpa sidebar/header).
+* [x] **Public Controller**: Read data is_published = 1.  
+* [x] **Landing Page**: Tampilkan data dalam tabel/grid card yang rapi.  
+* [x] **Widget Page**: Halaman khusus iframe (tanpa sidebar/header).
 
 ## **Phase 7: Finalisasi & Deploy**
 
