@@ -20,10 +20,10 @@ export default defineEventHandler(async (event) => {
         const creatorId = firstUser[0].id;
 
         // Generate 40 programs spread across Jan-Feb 2026
-        const samplePrograms = [];
-        const statuses = ['perencanaan', 'pelaksanaan', 'selesai'];
-        const jenisPengawasanTypes = ['regular', 'riksus'];
-        const irbanUnits = ['irban1', 'irban2', 'irban3', 'irban4'];
+        const samplePrograms: any[] = [];
+        const statuses = ['perencanaan', 'pelaksanaan', 'selesai'] as const;
+        const jenisPengawasanTypes = ['regular', 'riksus'] as const;
+        const irbanUnits = ['irban1', 'irban2', 'irban3', 'irban4'] as const;
         const objekList = [
             'Dinas Pendidikan', 'Dinas Kesehatan', 'BPKAD', 'Dinas PU',
             'Dinas Perhubungan', 'Dinas Sosial', 'BPBD', 'Dinas Pariwisata',
@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
 
         for (let i = 1; i <= 40; i++) {
             const irban = irbanUnits[Math.floor(Math.random() * irbanUnits.length)];
+            if (!irban) continue; // Safety check
             const irbanNo = parseInt(irban.replace('irban', ''));
             const noProgram = String(i).padStart(2, '0');
 
