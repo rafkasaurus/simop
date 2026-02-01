@@ -7,8 +7,8 @@ FROM node:25-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm using npm (more reliable than corepack on alpine)
+RUN npm install -g pnpm@10.28.2
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
@@ -30,8 +30,8 @@ FROM node:25-alpine
 # Set working directory
 WORKDIR /app
 
-# Install pnpm (needed if you want to use pnpm commands in production)
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm using npm (not needed for runtime, but included for consistency)
+RUN npm install -g pnpm@10.28.2
 
 # Copy built application from builder
 COPY --from=builder /app/.output ./.output
