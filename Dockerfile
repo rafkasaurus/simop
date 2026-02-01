@@ -1,17 +1,20 @@
 # Dockerfile for Nuxt 4 + Railway
-# Using npm for compatibility
+# Using pnpm for package management
 
 # Stage 1: Build
-FROM node:22-alpine AS builder
+FROM node:23-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install dependencies (try npm, fallback if lockfile mismatch)
-RUN npm install
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies using pnpm
+RUN pnpm install --frozen-lockfile
 
 # Copy all files
 COPY . .
@@ -19,17 +22,21 @@ COPY . .
 # Build the application
 ENV NODE_ENV=production
 ENV NUXT_TELEMETRY_DISABLED=1
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Production
-FROM node:20-alpine
+FROM node:23-alpine
 
 # Set working directory
 WORKDIR /app
 
+# Install pnpm (needed if you want to use pnpm commands in production)
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # Copy built application from builder
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/server/database/migrations ./server/database/migrations
 
 # Expose port (Railway will override with $PORT)
 EXPOSE 3000
@@ -41,7 +48,8 @@ ENV PORT=3000
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nuxtjs -u 1001
+    adduser -S nuxtjs -u 1001 && \
+    chown -R nuxtjs:nodejs /app
 USER nuxtjs
 
 # Health check
