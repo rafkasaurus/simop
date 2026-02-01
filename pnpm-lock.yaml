@@ -23,6 +23,12 @@ importers:
       daisyui:
         specifier: ^5.5.14
         version: 5.5.14
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-kit:
+        specifier: ^0.31.8
+        version: 0.31.8
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(kysely@0.28.10)(postgres@3.4.8)
@@ -45,12 +51,6 @@ importers:
       '@types/node':
         specifier: ^25.1.0
         version: 25.1.0
-      dotenv:
-        specifier: ^17.2.3
-        version: 17.2.3
-      drizzle-kit:
-        specifier: ^0.31.8
-        version: 0.31.8
     optionalDependencies:
       '@oxc-parser/binding-linux-x64-gnu':
         specifier: '*'
