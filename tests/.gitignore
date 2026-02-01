@@ -1,0 +1,25 @@
+# Test artifacts
+coverage/
+.nyc_output/
+*.lcov
+
+# Playwright artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env.test
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/

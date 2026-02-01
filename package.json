@@ -10,7 +10,12 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "migrate": "tsx scripts/migrate.ts",
-    "start": "node .output/server/index.mjs"
+    "start": "node .output/server/index.mjs",
+    "test": "vitest",
+    "test:unit": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "test:e2e": "playwright test",
+    "test:all": "pnpm test:unit && pnpm test:e2e"
   },
   "dependencies": {
     "@nuxt/icon": "^2.2.1",
