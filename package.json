@@ -1,0 +1,30 @@
+{
+  "name": "simop",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/icon": "^2.2.1",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "better-auth": "^1.4.18",
+    "chart.js": "^4.5.1",
+    "daisyui": "^5.5.14",
+    "drizzle-orm": "^0.45.1",
+    "nuxt": "^4.3.0",
+    "postgres": "^3.4.8",
+    "vue": "^3.5.27",
+    "vue-chartjs": "^5.3.3",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.1.0",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.8"
+  }
+}
