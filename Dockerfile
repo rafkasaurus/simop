@@ -2,7 +2,7 @@
 # Using npm for compatibility
 
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set working directory
 WORKDIR /app
