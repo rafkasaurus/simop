@@ -36,7 +36,9 @@ RUN npm install -g pnpm@10.28.2
 # Copy built application from builder
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/server/database/migrations ./server/database/migrations
+COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/drizzle.config.ts ./
 
 # Expose port (Railway will override with $PORT)
@@ -57,5 +59,5 @@ USER nuxtjs
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD node -e "require('http').get('http://localhost:3000/', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
 
-# Start the application
-CMD ["node", ".output/server/index.mjs"]
+# Start the application (run migrations first, then start)
+CMD pnpm run migrate && node .output/server/index.mjs
