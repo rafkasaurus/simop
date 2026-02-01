@@ -1,8 +1,27 @@
+/**
+ * @deprecated This endpoint is DEPRECATED
+ * Use POST /api/seed/init instead
+ * 
+ * CRITICAL BUG: This file creates user records directly in the database
+ * WITHOUT creating corresponding account records with passwords.
+ * Users created this way CANNOT LOGIN!
+ * 
+ * This file is kept for reference only.
+ */
+
 import { useDrizzle } from "~~/server/utils/drizzle";
 import { users } from "~~/server/database/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
+    return {
+        deprecated: true,
+        message: "This endpoint is deprecated. Please use POST /api/seed/init instead.",
+        reason: "This creates users without passwords, making them unable to login. Use the new init endpoint which properly sets up authentication."
+    };
+
+    // Original buggy code (commented out):
+    /*
     try {
         const db = useDrizzle();
 
@@ -56,4 +75,5 @@ export default defineEventHandler(async (event) => {
             code: error.code
         };
     }
+    */
 });

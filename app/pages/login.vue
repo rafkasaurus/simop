@@ -19,8 +19,10 @@ async function handleLogin() {
 
     console.log('Attempting login for:', username.value);
 
-    const { data, error } = await authClient.signIn.email({
-      email: username.value,
+    // Note: better-auth expects email in the email field
+    // Our users have email format as "username@domain.com"
+    const { data, error} = await authClient.signIn.email({
+      email: username.value.includes('@') ? username.value : `${username.value}@simop.com`,
       password: password.value,
       callbackURL: "/", // Redirect to home after login
     });

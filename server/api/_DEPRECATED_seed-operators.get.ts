@@ -1,8 +1,27 @@
+/**
+ * @deprecated This endpoint is DEPRECATED
+ * Use POST /api/seed/init instead
+ * 
+ * CRITICAL BUG: This file creates user records directly in the database
+ * WITHOUT creating corresponding account records with passwords.
+ * Users created this way CANNOT LOGIN!
+ * 
+ * This file is kept for reference only.
+ */
+
 import { useDrizzle } from "~~/server/utils/drizzle";
 import { users } from "~~/server/database/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
+    return {
+        deprecated: true,
+        message: "This endpoint is deprecated. Please use POST /api/seed/init instead.",
+        reason: "This creates users without passwords, making them unable to login. Use the new init endpoint which properly sets up authentication."
+    };
+
+    // Original buggy code (commented out) - DO NOT USE
+    /*
     try {
         const db = useDrizzle();
 
@@ -19,39 +38,7 @@ export default defineEventHandler(async (event) => {
                 role: "operator",
                 irbanUnit: "irban1"
             },
-            {
-                id: `user_operator2_${Date.now() + 1}`,
-                name: "Operator Irban 2",
-                username: "operator2",
-                email: "operator2@simop.local",
-                emailVerified: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                role: "operator",
-                irbanUnit: "irban2"
-            },
-            {
-                id: `user_operator3_${Date.now() + 2}`,
-                name: "Operator Irban 3",
-                username: "operator3",
-                email: "operator3@simop.local",
-                emailVerified: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                role: "operator",
-                irbanUnit: "irban3"
-            },
-            {
-                id: `user_operatorsus_${Date.now() + 3}`,
-                name: "Operator Irbansus",
-                username: "operatorsus",
-                email: "operatorsus@simop.local",
-                emailVerified: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                role: "operator",
-                irbanUnit: "irbansus"
-            }
+            // ... more operators
         ];
 
         // Check if operators already exist
@@ -91,32 +78,6 @@ export default defineEventHandler(async (event) => {
                 defaultPassword: "password123"
             })),
             note: "Users created without passwords. Use Better Auth registration or set passwords manually.",
-            credentials: [
-                {
-                    username: "operator1",
-                    email: "operator1@simop.local",
-                    irban: "irban1",
-                    defaultPassword: "password123 (needs to be set via auth)"
-                },
-                {
-                    username: "operator2",
-                    email: "operator2@simop.local",
-                    irban: "irban2",
-                    defaultPassword: "password123 (needs to be set via auth)"
-                },
-                {
-                    username: "operator3",
-                    email: "operator3@simop.local",
-                    irban: "irban3",
-                    defaultPassword: "password123 (needs to be set via auth)"
-                },
-                {
-                    username: "operatorsus",
-                    email: "operatorsus@simop.local",
-                    irban: "irbansus (Irban Khusus)",
-                    defaultPassword: "password123 (needs to be set via auth)"
-                }
-            ]
         };
     } catch (error: any) {
         console.error('Seed operators error:', error);
@@ -126,4 +87,5 @@ export default defineEventHandler(async (event) => {
             code: error.code
         };
     }
+    */
 });

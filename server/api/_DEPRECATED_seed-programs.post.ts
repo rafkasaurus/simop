@@ -1,8 +1,26 @@
+/**
+ * @deprecated This endpoint is DEPRECATED
+ * Use POST /api/seed/init instead
+ * 
+ * This file creates a small sample of programs.
+ * The new init endpoint creates a more complete dataset (30 programs).
+ * 
+ * This file is kept for reference only.
+ */
+
 import { useDrizzle } from "~~/server/utils/drizzle";
 import { pkptPrograms, users } from "~~/server/database/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
+    return {
+        deprecated: true,
+        message: "This endpoint is deprecated. Please use POST /api/seed/init instead.",
+        reason: "The new init endpoint provides a more comprehensive dataset with 30 programs across all Irban units."
+    };
+
+    // Original code (commented out):
+    /*
     try {
         const db = useDrizzle();
 
@@ -38,38 +56,7 @@ export default defineEventHandler(async (event) => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
-            {
-                kodeProgram: "PKPT-002-2024",
-                namaKegiatan: "Review Pelaksanaan Anggaran",
-                irbanPj: "irban2",
-                objekPengawasan: "Dinas Kesehatan",
-                jenisPengawasan: "regular",
-                tglMulai: "2024-02-01",
-                tglSelesai: "2024-03-01",
-                status: "pelaksanaan",
-                progresPersen: 60,
-                isPublished: true,
-                isSecret: false,
-                createdById: creatorId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                kodeProgram: "PKPT-003-2024",
-                namaKegiatan: "Investigasi Kasus Khusus",
-                irbanPj: "irban3",
-                objekPengawasan: "BPKAD",
-                jenisPengawasan: "riksus",
-                tglMulai: "2024-03-01",
-                tglSelesai: "2024-04-30",
-                status: "perencanaan",
-                progresPersen: 25,
-                isPublished: false,
-                isSecret: true,
-                createdById: creatorId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            }
+            // ... more programs
         ];
 
         // Insert sample data
@@ -90,4 +77,5 @@ export default defineEventHandler(async (event) => {
             code: error.code
         };
     }
+    */
 });
