@@ -1,6 +1,7 @@
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
+import { resolve } from "path";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -16,8 +17,12 @@ export default defineEventHandler(async (event) => {
         const migrationClient = postgres(process.env.DATABASE_URL, { max: 1 });
         const db = drizzle(migrationClient);
 
+        // Resolve migrations folder path (works in both dev and production)
+        const migrationsFolder = resolve(process.cwd(), "server/database/migrations");
+        console.log("Migrations folder:", migrationsFolder);
+
         // Run migrations
-        await migrate(db, { migrationsFolder: "./server/database/migrations" });
+        await migrate(db, { migrationsFolder });
 
         // Close connection
         await migrationClient.end();
