@@ -1,8 +1,8 @@
-import { authClient } from "~~/lib/auth-client";
+import { auth } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
     try {
-        const session = await authClient.api.getSession({
+        const session = await auth.api.getSession({
             headers: event.headers
         });
 
