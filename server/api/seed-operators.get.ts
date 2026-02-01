@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     try {
         const db = useDrizzle();
 
-        // Define 3 operator users, one for each IRBAN
+        // Define 4 operator users: irban1, irban2, irban3, irbansus (Irban Khusus)
         const operatorUsers = [
             {
                 id: `user_operator1_${Date.now()}`,
@@ -40,6 +40,17 @@ export default defineEventHandler(async (event) => {
                 updatedAt: new Date(),
                 role: "operator",
                 irbanUnit: "irban3"
+            },
+            {
+                id: `user_operatorsus_${Date.now() + 3}`,
+                name: "Operator Irbansus",
+                username: "operatorsus",
+                email: "operatorsus@simop.local",
+                emailVerified: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                role: "operator",
+                irbanUnit: "irbansus"
             }
         ];
 
@@ -97,6 +108,12 @@ export default defineEventHandler(async (event) => {
                     username: "operator3",
                     email: "operator3@simop.local",
                     irban: "irban3",
+                    defaultPassword: "password123 (needs to be set via auth)"
+                },
+                {
+                    username: "operatorsus",
+                    email: "operatorsus@simop.local",
+                    irban: "irbansus (Irban Khusus)",
                     defaultPassword: "password123 (needs to be set via auth)"
                 }
             ]

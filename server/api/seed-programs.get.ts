@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
         const samplePrograms: any[] = [];
         const statuses = ['perencanaan', 'pelaksanaan', 'selesai'] as const;
         const jenisPengawasanTypes = ['regular', 'riksus'] as const;
-        const irbanUnits = ['irban1', 'irban2', 'irban3', 'irban4'] as const;
+        const irbanUnits = ['irban1', 'irban2', 'irban3', 'irbansus'] as const;
         const objekList = [
             'Dinas Pendidikan', 'Dinas Kesehatan', 'BPKAD', 'Dinas PU',
             'Dinas Perhubungan', 'Dinas Sosial', 'BPBD', 'Dinas Pariwisata',
@@ -39,7 +39,16 @@ export default defineEventHandler(async (event) => {
         for (let i = 1; i <= 40; i++) {
             const irban = irbanUnits[Math.floor(Math.random() * irbanUnits.length)];
             if (!irban) continue; // Safety check
-            const irbanNo = parseInt(irban.replace('irban', ''));
+
+            // Handle irbansus differently (no number)
+            let kodeIrban: string;
+            if (irban === 'irbansus') {
+                kodeIrban = 'IRBANSUS';
+            } else {
+                const irbanNo = parseInt(irban.replace('irban', ''));
+                kodeIrban = `IRBAN${irbanNo}`;
+            }
+
             const noProgram = String(i).padStart(2, '0');
 
             // Random dates in Jan-Feb 2026
@@ -66,7 +75,7 @@ export default defineEventHandler(async (event) => {
             const isSecret = jenisPengawasan === 'riksus' && Math.random() > 0.7;
 
             samplePrograms.push({
-                kodeProgram: `PKPT-IRBAN${irbanNo}-${noProgram}`,
+                kodeProgram: `PKPT-${kodeIrban}-${noProgram}`,
                 namaKegiatan: `${kegiatan} ${objek}`,
                 irbanPj: irban,
                 objekPengawasan: objek,
