@@ -27,5 +27,9 @@
     "@types/node": "^25.1.0",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8"
+  },
+  "optionalDependencies": {
+    "@oxc-parser/binding-linux-x64-gnu": "*",
+    "@oxc-parser/binding-linux-x64-musl": "*"
   }
 }

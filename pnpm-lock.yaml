@@ -51,6 +51,13 @@ importers:
       drizzle-kit:
         specifier: ^0.31.8
         version: 0.31.8
+    optionalDependencies:
+      '@oxc-parser/binding-linux-x64-gnu':
+        specifier: '*'
+        version: 0.110.0
+      '@oxc-parser/binding-linux-x64-musl':
+        specifier: '*'
+        version: 0.110.0
 
 packages:
 
