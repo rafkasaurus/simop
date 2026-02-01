@@ -37,6 +37,7 @@ RUN npm install -g pnpm@10.28.2
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/server/database/migrations ./server/database/migrations
+COPY --from=builder /app/drizzle.config.ts ./
 
 # Expose port (Railway will override with $PORT)
 EXPOSE 3000
