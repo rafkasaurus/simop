@@ -2,6 +2,7 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { resolve } from "path";
+import { existsSync, readdirSync } from "fs";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -19,20 +20,45 @@ export default defineEventHandler(async (event) => {
 
         // Resolve migrations folder path (works in both dev and production)
         const migrationsFolder = resolve(process.cwd(), "server/database/migrations");
-        console.log("Migrations folder:", migrationsFolder);
+        console.log("=== MIGRATION DEBUG INFO ===");
+        console.log("Current working directory:", process.cwd());
+        console.log("Migrations folder path:", migrationsFolder);
+        console.log("Migrations folder exists:", existsSync(migrationsFolder));
+        
+        if (existsSync(migrationsFolder)) {
+            const files = readdirSync(migrationsFolder);
+            console.log("Files in migrations folder:", files);
+            
+            const metaFolder = resolve(migrationsFolder, "meta");
+            console.log("Meta folder exists:", existsSync(metaFolder));
+            
+            if (existsSync(metaFolder)) {
+                const metaFiles = readdirSync(metaFolder);
+                console.log("Files in meta folder:", metaFiles);
+            }
+        }
 
         // Run migrations
+        console.log("Starting migration...");
         await migrate(db, { migrationsFolder });
+        console.log("Migration completed successfully");
 
         // Close connection
         await migrationClient.end();
 
         return {
             success: true,
-            message: "Database migration completed successfully"
+            message: "Database migration completed successfully",
+            debug: {
+                migrationsFolder,
+                folderExists: existsSync(migrationsFolder),
+                files: existsSync(migrationsFolder) ? readdirSync(migrationsFolder) : []
+            }
         };
     } catch (error: any) {
-        console.error("Migration error:", error);
+        console.error("=== MIGRATION ERROR ===");
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
         throw createError({
             statusCode: 500,
             statusMessage: `Migration failed: ${error.message}`
