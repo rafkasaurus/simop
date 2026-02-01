@@ -47,7 +47,6 @@ EXPOSE 3000
 # Set environment variables
 ENV NODE_ENV=production
 ENV NITRO_PRESET=node-server
-ENV PORT=3000
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -55,9 +54,9 @@ RUN addgroup -g 1001 -S nodejs && \
     chown -R nuxtjs:nodejs /app
 USER nuxtjs
 
-# Health check
+# Health check (uses PORT env var, defaults to 3000)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000/', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
+    CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 3000), (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
 
 # Start the application (run migrations first, then start)
 CMD pnpm run migrate && node .output/server/index.mjs
