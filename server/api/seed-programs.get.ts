@@ -19,57 +19,68 @@ export default defineEventHandler(async (event) => {
 
         const creatorId = firstUser[0].id;
 
-        // Sample programs with new format: PKPT-{IRBAN-XX}-XX
-        const samplePrograms = [
-            {
-                kodeProgram: "PKPT-IRBAN1-01",
-                namaKegiatan: "Audit Keuangan Daerah",
-                irbanPj: "irban1",
-                objekPengawasan: "Dinas Pendidikan",
-                jenisPengawasan: "regular",
-                tglMulai: "2024-01-15",
-                tglSelesai: "2024-02-15",
-                status: "selesai",
-                progresPersen: 100,
-                isPublished: true,
-                isSecret: false,
-                createdById: creatorId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                kodeProgram: "PKPT-IRBAN2-01",
-                namaKegiatan: "Review Pelaksanaan Anggaran",
-                irbanPj: "irban2",
-                objekPengawasan: "Dinas Kesehatan",
-                jenisPengawasan: "regular",
-                tglMulai: "2024-02-01",
-                tglSelesai: "2024-03-01",
-                status: "pelaksanaan",
-                progresPersen: 60,
-                isPublished: true,
-                isSecret: false,
-                createdById: creatorId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                kodeProgram: "PKPT-IRBAN3-01",
-                namaKegiatan: "Investigasi Kasus Khusus",
-                irbanPj: "irban3",
-                objekPengawasan: "BPKAD",
-                jenisPengawasan: "riksus",
-                tglMulai: "2024-03-01",
-                tglSelesai: "2024-04-30",
-                status: "perencanaan",
-                progresPersen: 25,
-                isPublished: false,
-                isSecret: true,
-                createdById: creatorId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            }
+        // Generate 40 programs spread across Jan-Feb 2026
+        const samplePrograms = [];
+        const statuses = ['perencanaan', 'pelaksanaan', 'selesai'];
+        const jenisPengawasanTypes = ['regular', 'riksus'];
+        const irbanUnits = ['irban1', 'irban2', 'irban3', 'irban4'];
+        const objekList = [
+            'Dinas Pendidikan', 'Dinas Kesehatan', 'BPKAD', 'Dinas PU',
+            'Dinas Perhubungan', 'Dinas Sosial', 'BPBD', 'Dinas Pariwisata',
+            'Dinas Pertanian', 'Dinas Perikanan', 'Sekretariat Daerah',
+            'DPRD', 'Bappeda', 'BKD', 'Inspektorat'
         ];
+        const kegiatanPrefixes = [
+            'Audit Keuangan', 'Review Anggaran', 'Evaluasi Program',
+            'Monitoring Kegiatan', 'Pemeriksaan Reguler', 'Investigasi',
+            'Verifikasi Data', 'Asistensi', 'Konsultasi', 'Supervisi'
+        ];
+
+        for (let i = 1; i <= 40; i++) {
+            const irban = irbanUnits[Math.floor(Math.random() * irbanUnits.length)];
+            const irbanNo = parseInt(irban.replace('irban', ''));
+            const noProgram = String(i).padStart(2, '0');
+
+            // Random dates in Jan-Feb 2026
+            const month = i <= 20 ? 1 : 2; // First 20 in Jan, rest in Feb
+            const startDay = Math.floor(Math.random() * 20) + 1;
+            const duration = Math.floor(Math.random() * 20) + 10; // 10-30 days
+            const endDay = Math.min(startDay + duration, month === 1 ? 31 : 28);
+
+            const tglMulai = `2026-${String(month).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+            const tglSelesai = `2026-${String(month).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            const jenisPengawasan = jenisPengawasanTypes[Math.floor(Math.random() * jenisPengawasanTypes.length)];
+            const objek = objekList[Math.floor(Math.random() * objekList.length)];
+            const kegiatan = kegiatanPrefixes[Math.floor(Math.random() * kegiatanPrefixes.length)];
+
+            // Progress based on status
+            let progres = 0;
+            if (status === 'selesai') progres = 100;
+            else if (status === 'pelaksanaan') progres = Math.floor(Math.random() * 60) + 30;
+            else progres = Math.floor(Math.random() * 30);
+
+            // Most programs are public, only some riksus are secret
+            const isSecret = jenisPengawasan === 'riksus' && Math.random() > 0.7;
+
+            samplePrograms.push({
+                kodeProgram: `PKPT-IRBAN${irbanNo}-${noProgram}`,
+                namaKegiatan: `${kegiatan} ${objek}`,
+                irbanPj: irban,
+                objekPengawasan: objek,
+                jenisPengawasan: jenisPengawasan,
+                tglMulai: tglMulai,
+                tglSelesai: tglSelesai,
+                status: status,
+                progresPersen: progres,
+                isPublished: true, // All published
+                isSecret: isSecret,
+                createdById: creatorId,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+        }
 
         // Insert sample data
         const inserted = await db.insert(pkptPrograms)
@@ -79,8 +90,23 @@ export default defineEventHandler(async (event) => {
         return {
             success: true,
             message: `${inserted.length} sample programs created successfully!`,
-            programs: inserted,
-            note: "Format kode: PKPT-{IRBAN}-{NO}"
+            totalPrograms: inserted.length,
+            breakdown: {
+                byStatus: {
+                    perencanaan: inserted.filter(p => p.status === 'perencanaan').length,
+                    pelaksanaan: inserted.filter(p => p.status === 'pelaksanaan').length,
+                    selesai: inserted.filter(p => p.status === 'selesai').length,
+                },
+                byType: {
+                    regular: inserted.filter(p => p.jenisPengawasan === 'regular').length,
+                    riksus: inserted.filter(p => p.jenisPengawasan === 'riksus').length,
+                },
+                visibility: {
+                    public: inserted.filter(p => !p.isSecret).length,
+                    secret: inserted.filter(p => p.isSecret).length,
+                }
+            },
+            note: "Format kode: PKPT-IRBAN#-## | Data spread across Jan-Feb 2026"
         };
     } catch (error: any) {
         console.error('Seed data error:', error);
