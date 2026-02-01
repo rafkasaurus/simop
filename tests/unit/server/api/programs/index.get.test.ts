@@ -1,9 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
 import { createTestDatabase, seedTestUsers, seedTestPrograms, seedTestAccounts } from '../../../../utils/test-db'
 import { createMockAdminSession, createMockOperatorSession } from '../../../../utils/test-auth'
 
-describe('GET /api/programs', () => {
+describe('GET /api/programs', async () => {
+  await setup({
+    server: true,
+  })
+
   let testDb: any
 
   beforeEach(async () => {

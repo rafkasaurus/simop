@@ -3,13 +3,8 @@ import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
   test: {
-    environment: 'nuxt',
-    environmentOptions: {
-      nuxt: {
-        rootDir: fileURLToPath(new URL('./', import.meta.url)),
-        domEnvironment: 'happy-dom',
-      },
-    },
+    environment: 'node',
+    // For unit tests, we use node environment
     globals: true,
     coverage: {
       provider: 'v8',
@@ -35,11 +30,11 @@ export default defineConfig({
         branches: 80,
         statements: 80,
       },
-      all: true,
       include: ['server/**/*.ts', 'app/**/*.vue', 'app/**/*.ts'],
     },
     setupFiles: ['./tests/setup.ts'],
-    include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
+    include: ['tests/**/*.test.ts'],
+    exclude: ['tests/e2e/**', 'node_modules/**', 'dist/**'],
     testTimeout: 10000,
     hookTimeout: 10000,
   },

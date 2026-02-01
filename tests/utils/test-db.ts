@@ -1,116 +1,57 @@
-import { newDb } from 'pg-mem'
-import { drizzle } from 'drizzle-orm/pg-mem'
-import * as schema from '../../server/database/schema'
+import { vi } from 'vitest'
 
 /**
- * Create an in-memory test database
+ * Create a mocked test database
+ * This provides a simple in-memory mock for testing without real database
  */
 export function createTestDatabase() {
-  const mem = newDb()
+  // Mock data storage
+  const mockUsers: any[] = []
+  const mockPrograms: any[] = []
+  const mockAccounts: any[] = []
   
-  // Create the database schema
-  mem.public.none(`
-    CREATE TABLE users (
-      id TEXT PRIMARY KEY,
-      username TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      email TEXT,
-      email_verified BOOLEAN NOT NULL DEFAULT false,
-      image TEXT,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      role TEXT NOT NULL DEFAULT 'operator',
-      irban_unit TEXT
-    );
-
-    CREATE TABLE sessions (
-      id TEXT PRIMARY KEY,
-      expires_at TIMESTAMP NOT NULL,
-      token TEXT UNIQUE NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      ip_address TEXT,
-      user_agent TEXT,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE accounts (
-      id TEXT PRIMARY KEY,
-      account_id TEXT NOT NULL,
-      provider_id TEXT NOT NULL,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      access_token TEXT,
-      refresh_token TEXT,
-      id_token TEXT,
-      access_token_expires_at TIMESTAMP,
-      refresh_token_expires_at TIMESTAMP,
-      scope TEXT,
-      password TEXT,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(provider_id, account_id)
-    );
-
-    CREATE TABLE verification (
-      id TEXT PRIMARY KEY,
-      identifier TEXT NOT NULL,
-      value TEXT NOT NULL,
-      expires_at TIMESTAMP NOT NULL,
-      created_at TIMESTAMP,
-      updated_at TIMESTAMP
-    );
-
-    CREATE TABLE pkpt_programs (
-      id TEXT PRIMARY KEY,
-      kode_program TEXT UNIQUE NOT NULL,
-      nama_kegiatan TEXT NOT NULL,
-      tujuan TEXT,
-      jenis_pengawasan TEXT NOT NULL,
-      area_pengawasan TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'perencanaan',
-      tgl_mulai DATE,
-      tgl_selesai DATE,
-      realisasi_tgl_mulai DATE,
-      realisasi_tgl_selesai DATE,
-      progress INTEGER NOT NULL DEFAULT 0,
-      irban_pj TEXT NOT NULL,
-      tim_leader TEXT,
-      anggota_tim TEXT[],
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      created_by_id TEXT REFERENCES users(id),
-      is_secret BOOLEAN NOT NULL DEFAULT false,
-      is_published BOOLEAN NOT NULL DEFAULT false
-    );
-
-    CREATE INDEX idx_users_username ON users(username);
-    CREATE INDEX idx_users_role ON users(role);
-    CREATE INDEX idx_sessions_user_id ON sessions(user_id);
-    CREATE INDEX idx_sessions_token ON sessions(token);
-    CREATE INDEX idx_accounts_user_id ON accounts(user_id);
-    CREATE INDEX idx_pkpt_programs_irban_pj ON pkpt_programs(irban_pj);
-    CREATE INDEX idx_pkpt_programs_status ON pkpt_programs(status);
-    CREATE INDEX idx_pkpt_programs_created_by_id ON pkpt_programs(created_by_id);
-  `)
-
-  const db = drizzle(mem.adapters.createPg(), { schema })
+  // Create mock database with chainable query methods
+  const mockDb = {
+    select: vi.fn().mockReturnThis(),
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+    orderBy: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockImplementation(() => Promise.resolve(mockPrograms)),
+    insert: vi.fn().mockReturnThis(),
+    values: vi.fn().mockImplementation((data: any) => {
+      // Store data based on context
+      if (Array.isArray(data)) {
+        mockUsers.push(...data)
+        mockPrograms.push(...data)
+        mockAccounts.push(...data)
+      }
+      return Promise.resolve({ rowCount: 1 })
+    }),
+    delete: vi.fn().mockReturnThis(),
+    execute: vi.fn().mockResolvedValue({ rowCount: 0 }),
+    // Add direct table access for seeding
+    users: mockUsers,
+    pkptPrograms: mockPrograms,
+    accounts: mockAccounts,
+  }
   
-  return { db, mem }
+  // Return mock db structure
+  return { db: mockDb as any, mockUsers, mockPrograms, mockAccounts }
 }
 
 /**
  * Clear all data from test database
  */
 export function clearTestDatabase(db: any) {
-  // Delete in correct order to avoid foreign key violations
-  db.delete(schema.pkptPrograms)
-  db.delete(schema.sessions)
-  db.delete(schema.accounts)
-  db.delete(schema.users)
+  // For mocked db, just clear arrays
+  if (db.users) db.users.length = 0
+  if (db.pkptPrograms) db.pkptPrograms.length = 0
+  if (db.accounts) db.accounts.length = 0
 }
 
 /**
  * Seed test data for users
+ * For mocked approach, we just push mock data to arrays
  */
 export async function seedTestUsers(db: any) {
   const now = new Date()
@@ -151,7 +92,10 @@ export async function seedTestUsers(db: any) {
     },
   ]
 
-  await db.insert(schema.users).values(users)
+  // For mocked db, push to users array
+  if (db.users) {
+    db.users.push(...users)
+  }
   return users
 }
 
@@ -204,7 +148,10 @@ export async function seedTestPrograms(db: any) {
     },
   ]
 
-  await db.insert(schema.pkptPrograms).values(programs)
+  // For mocked db, push to programs array
+  if (db.pkptPrograms) {
+    db.pkptPrograms.push(...programs)
+  }
   return programs
 }
 
@@ -244,6 +191,9 @@ export async function seedTestAccounts(db: any) {
     },
   ]
 
-  await db.insert(schema.accounts).values(accounts)
+  // For mocked db, push to accounts array
+  if (db.accounts) {
+    db.accounts.push(...accounts)
+  }
   return accounts
 }

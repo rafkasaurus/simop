@@ -1,14 +1,11 @@
 import { beforeAll, afterAll, afterEach } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils/e2e'
 
-// Setup Nuxt test environment
+// Global test setup - Initialize environment variables
 beforeAll(async () => {
-  await setup({
-    // Test context options
-    rootDir: process.cwd(),
-    browser: false,
-    server: true,
-  })
+  // Set test environment variables for tests
+  process.env.NODE_ENV = 'test'
+  process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/simop_test'
+  process.env.BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET || 'test-secret-key-for-testing'
 })
 
 // Cleanup after each test
@@ -18,5 +15,5 @@ afterEach(() => {
 
 // Cleanup after all tests
 afterAll(async () => {
-  //await cleanupTestDatabase()
+  // await cleanupTestDatabase()
 })
