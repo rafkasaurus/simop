@@ -1,0 +1,47 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output
+.output
+.nuxt
+dist
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs
+.o-docs
+
+# Testing
+test-widget.html
+*.test.ts
+*.spec.ts
+
+# Misc
+.github
+.eslintrc
+.prettierrc
+.editorconfig
