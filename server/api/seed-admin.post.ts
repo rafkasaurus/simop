@@ -7,9 +7,12 @@ export default defineEventHandler(async (event) => {
         const db = useDrizzle();
 
         // Check if admin already exists
-        const existingAdmin = await db.query.users.findFirst({
-            where: eq(users.username, 'admin')
-        });
+        const existingAdmins = await db.select()
+            .from(users)
+            .where(eq(users.username, 'admin'))
+            .limit(1);
+
+        const existingAdmin = existingAdmins[0];
 
         if (existingAdmin) {
             return {
@@ -46,6 +49,7 @@ export default defineEventHandler(async (event) => {
             note: "Please set password via registration/auth system"
         };
     } catch (error: any) {
+        console.error('Seed admin error:', error);
         return {
             success: false,
             error: error.message,

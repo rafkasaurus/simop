@@ -1,36 +1,42 @@
 import { useDrizzle } from "~~/server/utils/drizzle";
+import { sql } from "drizzle-orm";
+import { users, pkptPrograms } from "~~/server/database/schema";
 
 export default defineEventHandler(async (event) => {
     try {
         const db = useDrizzle();
 
-        // Check if tables exist
-        const result = await db.execute(`
+        // Check if tables exist using information_schema
+        const tablesQuery = sql`
             SELECT table_name 
             FROM information_schema.tables 
             WHERE table_schema = 'public' 
             AND table_type = 'BASE TABLE'
-            ORDER BY table_name;
-        `);
+            ORDER BY table_name
+        `;
 
-        // Count records in each table
-        const userCount = await db.execute(`SELECT COUNT(*) FROM "user"`);
-        const programCount = await db.execute(`SELECT COUNT(*) FROM "pkpt_program"`);
+        const tablesResult = await db.execute(tablesQuery);
+
+        // Count records using proper Drizzle queries
+        const userCountResult = await db.select({ count: sql<number>`count(*)::int` }).from(users);
+        const programCountResult = await db.select({ count: sql<number>`count(*)::int` }).from(pkptPrograms);
 
         return {
             success: true,
-            tables: result.rows,
+            tables: tablesResult,
             counts: {
-                users: userCount.rows[0]?.count || 0,
-                programs: programCount.rows[0]?.count || 0,
+                users: userCountResult[0]?.count || 0,
+                programs: programCountResult[0]?.count || 0,
             },
             message: "Database is connected and tables exist!"
         };
     } catch (error: any) {
+        console.error('Database check error:', error);
         return {
             success: false,
             error: error.message,
-            code: error.code
+            code: error.code,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         };
     }
 });
