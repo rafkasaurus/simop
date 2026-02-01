@@ -2,7 +2,7 @@
 # Using pnpm for package management
 
 # Stage 1: Build
-FROM node:23-alpine AS builder
+FROM node:25-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +25,7 @@ ENV NUXT_TELEMETRY_DISABLED=1
 RUN pnpm run build
 
 # Stage 2: Production
-FROM node:23-alpine
+FROM node:25-alpine
 
 # Set working directory
 WORKDIR /app
