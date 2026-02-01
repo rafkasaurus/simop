@@ -10,12 +10,17 @@ export const useDrizzle = () => {
     if (!_db) {
         const config = useRuntimeConfig();
 
-        if (!config.databaseUrl) {
-            throw new Error('DATABASE_URL is not configured');
+        // Fallback: Try runtimeConfig first, then process.env
+        const databaseUrl = config.databaseUrl || process.env.DATABASE_URL;
+
+        if (!databaseUrl) {
+            throw new Error('DATABASE_URL is not configured. Please set DATABASE_URL environment variable in Railway.');
         }
 
+        console.log('🔌 Connecting to database...');
+
         // Create connection with connection pooling
-        _queryClient = postgres(config.databaseUrl, {
+        _queryClient = postgres(databaseUrl, {
             max: 10, // Maximum 10 connections in pool
             idle_timeout: 20, // Close idle connections after 20s
             connect_timeout: 10, // Connection timeout 10s
