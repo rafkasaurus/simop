@@ -6,6 +6,10 @@ export default defineNuxtConfig({
   },
   srcDir: '.',
 
+  nitro: {
+    preset: 'node-server'
+  },
+
 
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss', '@nuxt/icon'],
